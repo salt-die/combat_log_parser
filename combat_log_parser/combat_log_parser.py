@@ -1,6 +1,7 @@
 import datetime
 import re
 from functools import cache
+from itertools import islice
 
 from .data_structures import LogEvent, _tuple_factory
 
@@ -71,10 +72,12 @@ def parse_line(line):
     event_type, *params = COMMA_RE.split(params)
 
     subevent = create_subevent(event_type)
-    params = list(map(parse_param, params))
+
+    parsed_params = map(parse_param, params)
+    log_params = tuple(islice(parsed_params, 6))
 
     return LogEvent(
         datetime.time.fromisoformat(time),
-        subevent(*params[6:]),
-        *params[:6],
+        subevent(*parsed_params),
+        *log_params,
     )
