@@ -7,7 +7,7 @@ from .data_structures import LogEvent, _tuple_factory
 
 SPACE_RE = re.compile(r'\s+')
 COMMA_RE = re.compile(r',(?! )')  # If comma is followed by a space, we're in a quoted string.
-REPLACE_RE = re.compile(r'(_.)|(^.)')
+UNDERSCORE_RE = re.compile(r'(_|^).')
 EVENTS = (
     'SWING',
     'SPELL_PERIODIC',
@@ -40,6 +40,9 @@ PARAM_TYPES = {
 }
 
 def parse_param(param):
+    """
+    Convert parameters into python types.
+    """
     if param == 'nil':
         return None
 
@@ -52,6 +55,9 @@ def parse_param(param):
     return int(param, 16)
 
 def to_pascal_case(match):
+    """
+    Capitalize characters following underscores.
+    """
     return match.group(0)[-1:].upper()
 
 @cache
@@ -62,8 +68,8 @@ def create_subevent(event_type):
             break
 
     return _tuple_factory(
-        REPLACE_RE.sub(to_pascal_case, prefix.lower()),
-        REPLACE_RE.sub(to_pascal_case, suffix.lower()),
+        UNDERSCORE_RE.sub(to_pascal_case, prefix.lower()),
+        UNDERSCORE_RE.sub(to_pascal_case, suffix.lower()),
     )
 
 def parse_line(line):
