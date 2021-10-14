@@ -1,5 +1,4 @@
 from datetime import time
-from itertools import chain
 from textwrap import dedent
 from typing import NamedTuple, Any
 
@@ -140,7 +139,7 @@ def _tuple_factory(prefix, suffix):
     """
     subevent = prefix + suffix
 
-    attrs = chain(PREFIXES[prefix], SUFFIXES[suffix]) if suffix else SPECIAL[prefix]
+    attrs = PREFIXES[prefix] + SUFFIXES[suffix] if suffix else SPECIAL[prefix]
     hints = f"\n        ".join(f"{attr}: Any = None" for attr in attrs)
 
     code = f"""
